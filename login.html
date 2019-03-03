@@ -1,0 +1,45 @@
+<html>
+
+<head>
+
+
+</head>
+
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.auth0.com/js/auth0/9.10/auth0.min.js"></script>
+<script>
+var auth0 = new auth0.WebAuth({
+    clientID: 'DL4D3aArEfTIEQza6Q4DoNimcBF5wJ0p',
+    domain: 'awsug.eu.auth0.com',
+    responseType: 'token id_token',
+    redirectUri: 'https://cb.awsug.nl/login.html',
+    scope: 'openid profile'
+});
+
+auth0.parseHash((err, authResult) => {
+  if (authResult && authResult.accessToken && authResult.idToken) {
+    window.location.hash = '';
+    // Store the authResult in local storage and redirect the user elsewhere
+    localStorage.setItem('idToken', authResult.idToken);
+    localStorage.setItem('access_token', authResult.accessToken);
+    localStorage.setItem('id_token', authResult.idToken);
+  } else if (err) {
+    // Handle authentication error, for example by displaying a notification to the user
+  }
+});
+
+$.ajax({
+  url: "https://hw4cl56irh.execute-api.eu-west-1.amazonaws.com/Prod",
+  data: {
+    authorizationToken: "Bearer " + localStorage.getItem('idToken')
+  },
+  success: function( result ) {
+    $( "#result" ).html( "<strong>" + result + "</strong> degrees" );
+  }
+});
+
+</script>
+<div class="result"></div>
+</body>
+</html>
